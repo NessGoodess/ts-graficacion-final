@@ -82,7 +82,7 @@ https://nessgoodess.github.io/ts-graficacion-final/
 
 - **Frans Laboratory**  
   <a href="https://www.youtube.com/@Frankslaboratory">
-    <img src="public/assets/Youtube.png" alt="Frans Laboratory" width="80" height="50">
+    <img src="public/assets/Youtube.png" alt="Frans Laboratory" width="80" height="40">
   </a>
 
 ---
