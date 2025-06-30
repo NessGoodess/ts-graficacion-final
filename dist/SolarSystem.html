@@ -1,142 +1,72 @@
-<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sistema Solar 3D TypeScript</title><script src="https://cdn.tailwindcss.com"></script><style>body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Arial', sans-serif;
-        }
-        canvas {
-            display: block;
-        }
-        .info-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
-            z-index: 100;
-        }
-        .title {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-            z-index: 100;
-        }
-        .controls-info {
-            position: absolute;
-            top: 70px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 1rem;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
-            z-index: 100;
-        }
-        .button {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-            margin: 5px;
-        }
-        .button:hover {
-            background-color: rgba(50, 50, 50, 0.7);
-        }
-        .button.active {
-            background-color: rgba(0, 100, 200, 0.7);
-        }
-        .control-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            z-index: 100;
-            max-width: 300px;
-        }
-        .slider-container {
-            margin: 10px 0;
-        }
-        .slider-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .slider {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-        }
-        .planet-tooltip {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            pointer-events: none;
-            z-index: 200;
-            display: none;
-        }
-        .planet-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 300;
-            max-width: 500px;
-            display: none;
-        }
-        .planet-info h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #66ccff;
-        }
-        .planet-info .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-        .loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .loading-spinner {
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 5px solid #66ccff;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }</style></head><body><div class="loading" id="loading"><div><div class="loading-spinner"></div><p class="text-white text-center mt-3">Cargando Sistema Solar...</p></div></div><div class="title">Sistema Solar 3D TypeScript</div><div class="controls-info">Arrastra para rotar | Rueda del ratón para zoom | Click derecho para mover</div><div class="control-panel"><h2 class="text-xl font-bold mb-2">Panel de Control</h2><div class="slider-container"><label for="rotationSpeed">Velocidad de Rotación:</label> <input type="range" id="rotationSpeed" class="slider" min="0" max="200" value="100"></div><div class="slider-container"><label for="orbitSpeed">Velocidad de Órbita:</label> <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100"></div><div class="button-row"><button class="button" id="toggleMilkyWay">Mostrar/Ocultar Vía Láctea</button></div></div><div class="info-panel" id="infoPanel"><h2 class="text-xl font-bold mb-2">Sistema Solar</h2><p class="mb-1">• Sol: Con corona solar y efectos de fuego</p><p class="mb-1">• Mercurio: El planeta más cercano al Sol</p><p class="mb-1">• Venus: El planeta más caliente</p><p class="mb-1">• Tierra: Nuestro hogar con su luna</p><p class="mb-1">• Marte: El planeta rojo</p><p class="mb-1">• Cinturón de Asteroides</p><p class="mb-1">• Júpiter: El planeta más grande</p><p class="mb-1">• Saturno: Con sus anillos característicos</p><p class="mb-1">• Urano: El planeta inclinado</p><p class="mb-1">• Neptuno: El planeta más lejano</p><p class="mt-3 text-sm italic">Haz clic en cualquier planeta para más información</p></div><div class="planet-tooltip" id="planetTooltip"></div><div class="planet-info" id="planetInfo"><span class="close" id="closePlanetInfo">&times;</span><h2 id="planetInfoTitle">Nombre del Planeta</h2><div id="planetInfoContent"></div></div><script defer="defer" src="solarSystem.bundle.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar 3D TypeScript</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles_solarSystem.css">
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div>
+            <div class="loading-spinner"></div>
+            <p class="text-white text-center mt-3">Cargando Sistema Solar...</p>
+        </div>
+    </div>
+
+    <div class="title">Sistema Solar 3D TypeScript</div>
+    <div class="controls-info">Arrastra para rotar | Rueda del ratón para zoom | Click derecho para mover</div>
+    
+    <div class="control-panel">
+        <h2 class="text-xl font-bold mb-2">Panel de Control</h2>
+        
+        <div class="slider-container">
+            <label for="rotationSpeed">Velocidad de Rotación:</label>
+            <input type="range" id="rotationSpeed" class="slider" min="0" max="200" value="100">
+        </div>
+        
+        <div class="slider-container">
+            <label for="orbitSpeed">Velocidad de Órbita:</label>
+            <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100">
+        </div>
+        
+        <div class="button-row">
+            <!-- <button class="button" id="toggleAxes">Mostrar/Ocultar Ejes</button>-->
+            <button class="button" id="toggleMilkyWay">Mostrar/Ocultar Vía Láctea</button> 
+        </div>
+    </div>
+    
+    <div class="info-panel" id="infoPanel">
+        <h2 class="text-xl font-bold mb-2">Sistema Solar</h2>
+        <p class="mb-1">• Sol: Con corona solar y efectos de fuego</p>
+        <p class="mb-1">• Mercurio: El planeta más cercano al Sol</p>
+        <p class="mb-1">• Venus: El planeta más caliente</p>
+        <p class="mb-1">• Tierra: Nuestro hogar con su luna</p>
+        <p class="mb-1">• Marte: El planeta rojo</p>
+        <p class="mb-1">• Cinturón de Asteroides</p>
+        <p class="mb-1">• Júpiter: El planeta más grande</p>
+        <p class="mb-1">• Saturno: Con sus anillos característicos</p>
+        <p class="mb-1">• Urano: El planeta inclinado</p>
+        <p class="mb-1">• Neptuno: El planeta más lejano</p>
+        <p class="mt-3 text-sm italic">Haz clic en cualquier planeta para más información</p>
+    </div>
+    
+    <div class="planet-tooltip" id="planetTooltip"></div>
+    
+    <div class="planet-info" id="planetInfo">
+        <span class="close" onclick="closePlanetInfo()">&times;</span>
+        <div id="planetInfoContent"></div>
+    </div>
+    
+    <script src="../dist/solarSystem.bundle.js"></script>
+</body>
+</html>
+        <span class="close" id="closePlanetInfo">&times;</span>
+        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
+        <div id="planetInfoContent">
+            <!-- Contenido dinámico -->
+        </div>
+    </div>
+</body>
+</html>

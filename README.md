@@ -3,6 +3,7 @@
 Este repositorio contiene el proyecto final de la materia de Graficación, desarrollado en TypeScript y Webpack. Incluye dos experiencias interactivas:
 
 - **Frans Laboratory (Partículas)**: Inicialmente adapté el ejercicio clásico del laboratorio de Frans, reescribiéndolo en TypeScript para mejorar su estructura y rendimiento, agregando animación de partículas y conexiones dinámicas. Sin embargo, al finalizarlo sentí que era un reto muy sencillo y limitado, por lo que decidí complementar el proyecto desarrollando una segunda experiencia más compleja y visualmente atractiva.
+
 - **Sistema Solar 3D**: Este es el proyecto principal que decidí desarrollar, inspirado y basado en los proyectos de Frans Laboratory. Utiliza muchas de las herramientas y técnicas vistas en esos ejercicios, pero adaptadas y extendidas para crear una experiencia original y más compleja, reescrita completamente en TypeScript. El resultado es una simulación visual y animada de un sistema solar, con controles interactivos y efectos avanzados.
 
 ## 🛠️ Tecnologías utilizadas
@@ -16,7 +17,7 @@ Utilicé Webpack para facilitar el desarrollo, mejorar la organización del cód
 Puedes ver el proyecto en acción (por ejemplo, en GitHub Pages):
 
 ```
-https://<NessGoodess>.github.io/<Graficacion>/
+https://nessgoodess.github.io/ts-graficacion-final/
 ```
 ## 📸 Capturas de pantalla
 
@@ -78,6 +79,11 @@ https://<NessGoodess>.github.io/<Graficacion>/
   </a>
 - **Universidad Autónoma Benito Juárez de Oaxaca (UABJO)**  
   <img src="public/assets/Escudo_de_UABJO.png" alt="UABJO" width="50px" height="50px">
+
+- **Frans Laboratory**  
+  <a href="https://www.youtube.com/@Frankslaboratory">
+    <img src="public/assets/Youtube.png" alt="Frans Laboratory" width="80" height="50">
+  </a>
 
 ---
 

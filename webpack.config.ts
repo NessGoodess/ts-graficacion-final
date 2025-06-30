@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -33,37 +32,23 @@ module.exports = {
     clean: true,
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'public/index.html',
-      chunks: ['menu'],
-      inject: 'body',
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'SolarSystem.html',
-      template: 'public/SolarSystem.html',
-      chunks: ['solarSystem'],
-      inject: 'body',
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'FransLaboratory.html',
-      template: 'public/FransLaboratory.html',
-      chunks: ['fransLab'],
-      inject: 'body',
-    }),
     new CopyPlugin({
       patterns: [
+        { from: 'index.html', to: 'index.html' },
         { from: 'public/assets', to: 'assets' },
         { from: 'public/css', to: 'css' },
+        { from: 'public/SolarSystem.html', to: 'SolarSystem.html' },
+        { from: 'public/FransLaboratory.html', to: 'FransLaboratory.html' },
       ],
     }),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: path.join(__dirname, '.'),
     },
     compress: true,
     port: 9000,
     hot: true,
+    open: true,
   },
 };
