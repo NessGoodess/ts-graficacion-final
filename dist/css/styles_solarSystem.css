@@ -1,0 +1,392 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Arial', sans-serif;
+}
+canvas {
+    display: block;
+}
+.info-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 300px;
+    z-index: 100;
+}
+.title {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    z-index: 100;
+}
+.controls-info {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    z-index: 100;
+}
+.button {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+.button:hover {
+    background-color: rgba(50, 50, 50, 0.7);
+}
+.button.active {
+    background-color: rgba(0, 100, 200, 0.7);
+}
+.control-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    z-index: 100;
+    max-width: 300px;
+}
+.slider-container {
+    margin: 10px 0;
+}
+.slider-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+.slider {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+.planet-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+}
+.planet-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 300;
+    max-width: 500px;
+    display: none;
+}
+.planet-info h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #66ccff;
+}
+.planet-info .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.loading-spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 5px solid #66ccff;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design for Mobile Devices */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.5rem;
+        top: 15px;
+    }
+    
+    .controls-info {
+        font-size: 0.9rem;
+        top: 55px;
+    }
+    
+    .control-panel {
+        top: 15px;
+        right: 15px;
+        padding: 12px;
+        max-width: 250px;
+    }
+    
+    .info-panel {
+        bottom: 15px;
+        left: 15px;
+        padding: 12px;
+        max-width: 250px;
+    }
+    
+    .planet-info {
+        max-width: 400px;
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .planet-info h2 {
+        font-size: 20px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+    .title {
+        font-size: 1.2rem;
+        top: 10px;
+    }
+    
+    .controls-info {
+        font-size: 0.8rem;
+        top: 45px;
+        padding: 0 10px;
+    }
+    
+    .control-panel {
+        position: fixed;
+        top: auto;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        width: calc(100% - 20px);
+        padding: 10px;
+        border-radius: 8px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .control-panel.collapsed {
+        transform: translateY(calc(100% - 40px));
+    }
+    
+    .info-panel {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: auto;
+        max-width: none;
+        width: calc(100% - 20px);
+        padding: 10px;
+        border-radius: 8px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .info-panel.collapsed {
+        transform: translateY(calc(-100% + 40px));
+    }
+    
+    .button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        margin: 3px;
+    }
+    
+    .slider-container {
+        margin: 8px 0;
+    }
+    
+    .slider-container label {
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+    }
+    
+    .planet-info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        transform: none;
+        max-width: none;
+        width: calc(100% - 40px);
+        height: calc(100% - 40px);
+        overflow-y: auto;
+        padding: 15px;
+    }
+    
+    .planet-info h2 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .planet-tooltip {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+}
+
+/* Small mobile phones */
+@media (max-width: 480px) {
+    .title {
+        font-size: 1rem;
+        top: 8px;
+    }
+    
+    .controls-info {
+        font-size: 0.75rem;
+        top: 40px;
+    }
+    
+    .control-panel {
+        bottom: 8px;
+        right: 8px;
+        left: 8px;
+        width: calc(100% - 16px);
+        padding: 8px;
+    }
+    
+    .info-panel {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        width: calc(100% - 16px);
+        padding: 8px;
+    }
+    
+    .button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        margin: 2px;
+    }
+    
+    .slider-container label {
+        font-size: 0.8rem;
+    }
+    
+    .planet-info {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        width: calc(100% - 30px);
+        height: calc(100% - 30px);
+        padding: 12px;
+    }
+    
+    .planet-info h2 {
+        font-size: 16px;
+    }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .title {
+        font-size: 1rem;
+        top: 5px;
+    }
+    
+    .controls-info {
+        font-size: 0.7rem;
+        top: 30px;
+    }
+    
+    .control-panel {
+        top: 5px;
+        right: 5px;
+        bottom: auto;
+        left: auto;
+        width: auto;
+        max-width: 200px;
+        padding: 8px;
+    }
+    
+    .info-panel {
+        top: 5px;
+        left: 5px;
+        right: auto;
+        bottom: auto;
+        width: auto;
+        max-width: 200px;
+        padding: 8px;
+    }
+    
+    .button {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+        margin: 2px;
+    }
+    
+    .planet-info {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        padding: 10px;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .slider {
+        height: 20px;
+    }
+    
+    .planet-info .close {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

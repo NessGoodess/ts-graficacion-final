@@ -1,0 +1,374 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+  #matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.6;
+    background: #111;
+  }
+  .header-proyecto {
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 22px 0 18px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    box-shadow: 0 2px 12px #000a;
+  }
+  .header-proyecto-logo {
+    width: fit-content;
+    height: 56px;
+    border:none;
+    object-fit: cover;
+    background: transparent;
+    margin-left: 8px;
+  }
+  .header-proyecto-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .header-proyecto-main {
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #000a;
+  }
+  .header-proyecto-sec {
+    color: #00ccff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .menu-container {
+    background: rgba(30, 30, 30, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    z-index: 1;
+    position: relative;
+    margin: 120px 20px 100px 20px;
+    max-width: 450px;
+    width: calc(100% - 40px);
+  }
+  .menu-title {
+    color: #fff;
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #000a;
+    text-align: center;
+  }
+  .menu-description {
+    color: #ccc;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .menu-btn {
+    width: 260px;
+    padding: 18px 0;
+    margin: 8px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #00ff99 0%, #00ccff 100%);
+    color: #111;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px #00ff9955;
+  }
+  .menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 24px #00ccff88;
+  }
+  .footer {
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 0 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    box-shadow: 0 -2px 12px #000a;
+  }
+  .footer-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .footer img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00ccff;
+    background: #fff;
+  }
+  .footer a {
+    color: #00ccff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 6px;
+    margin-right: 6px;
+    transition: color 0.2s;
+  }
+  .footer a:hover {
+    color: #00ff99;
+    text-decoration: underline;
+  }
+  .copyright {
+    font-size: 0.95rem;
+    color: #aaa;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  /* Responsive Design */
+  
+  /* Tablets and small laptops */
+  @media (max-width: 1024px) {
+    .menu-container {
+      padding: 40px 24px;
+      margin: 110px 16px 90px 16px;
+    }
+    .menu-title {
+      font-size: 2rem;
+    }
+    .menu-description {
+      font-size: 1rem;
+      max-width: 350px;
+    }
+    .menu-btn {
+      width: 240px;
+      padding: 16px 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Tablets */
+  @media (max-width: 768px) {
+    .header-proyecto {
+      gap: 12px;
+      padding: 18px 0 14px 0;
+    }
+    .header-proyecto-logo {
+      height: 48px;
+    }
+    .header-proyecto-main {
+      font-size: 1.4rem;
+    }
+    .header-proyecto-sec {
+      font-size: 1rem;
+    }
+    .menu-container {
+      padding: 32px 20px;
+      margin: 100px 12px 80px 12px;
+      border-radius: 16px;
+    }
+    .menu-title {
+      font-size: 1.8rem;
+    }
+    .menu-description {
+      font-size: 0.95rem;
+      max-width: 320px;
+    }
+    .menu-btn {
+      width: 220px;
+      padding: 14px 0;
+      font-size: 1rem;
+    }
+  }
+
+  /* Mobile phones */
+  @media (max-width: 600px) {
+    .header-proyecto {
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 0 10px 0;
+    }
+    .header-proyecto-logo {
+      width: 38px;
+      height: 38px;
+      margin-left: 0;
+    }
+    .header-proyecto-main {
+      font-size: 1.2rem;
+    }
+    .header-proyecto-sec {
+      font-size: 0.9rem;
+    }
+    .menu-container {
+      padding: 24px 16px;
+      margin: 90px 8px 70px 8px;
+      border-radius: 12px;
+      gap: 24px;
+    }
+    .menu-title {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+    .menu-description {
+      font-size: 0.9rem;
+      max-width: 280px;
+      line-height: 1.4;
+    }
+    .menu-btn {
+      width: 100%;
+      max-width: 280px;
+      padding: 12px 0;
+      font-size: 0.95rem;
+    }
+    .footer-content {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer img {
+      width: 38px;
+      height: 38px;
+    }
+    .footer {
+      padding: 14px 0 8px 0;
+    }
+    .copyright {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Small mobile phones */
+  @media (max-width: 480px) {
+    .header-proyecto {
+      padding: 12px 0 8px 0;
+    }
+    .header-proyecto-logo {
+      width: 32px;
+      height: 32px;
+    }
+    .header-proyecto-main {
+      font-size: 1.1rem;
+    }
+    .header-proyecto-sec {
+      font-size: 0.8rem;
+    }
+    .menu-container {
+      padding: 20px 12px;
+      margin: 80px 6px 60px 6px;
+      gap: 20px;
+    }
+    .menu-title {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+    .menu-description {
+      font-size: 0.85rem;
+      max-width: 260px;
+    }
+    .menu-btn {
+      padding: 10px 0;
+      font-size: 0.9rem;
+      border-radius: 8px;
+    }
+    .footer {
+      padding: 12px 0 6px 0;
+    }
+    .footer img {
+      width: 32px;
+      height: 32px;
+    }
+    .copyright {
+      font-size: 0.8rem;
+    }
+  }
+
+  /* Extra small mobile phones */
+  @media (max-width: 360px) {
+    .header-proyecto-main {
+      font-size: 1rem;
+    }
+    .header-proyecto-sec {
+      font-size: 0.75rem;
+    }
+    .menu-container {
+      padding: 16px 8px;
+      margin: 70px 4px 50px 4px;
+    }
+    .menu-title {
+      font-size: 1.2rem;
+    }
+    .menu-description {
+      font-size: 0.8rem;
+      max-width: 240px;
+    }
+    .menu-btn {
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Landscape orientation for mobile */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .header-proyecto {
+      padding: 8px 0 6px 0;
+    }
+    .header-proyecto-logo {
+      height: 32px;
+    }
+    .header-proyecto-main {
+      font-size: 1rem;
+    }
+    .header-proyecto-sec {
+      font-size: 0.8rem;
+    }
+    .menu-container {
+      margin: 60px 20px 40px 20px;
+      padding: 20px 24px;
+      gap: 16px;
+    }
+    .menu-title {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .menu-description {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .menu-btn {
+      padding: 8px 0;
+      margin: 4px 0;
+    }
+    .footer {
+      padding: 8px 0 4px 0;
+    }
+  }

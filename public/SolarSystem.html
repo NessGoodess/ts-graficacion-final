@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar 3D TypeScript</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles_solarSystem.css">
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div>
+            <div class="loading-spinner"></div>
+            <p class="text-white text-center mt-3">Cargando Sistema Solar...</p>
+        </div>
+    </div>
+
+    <div class="title">Sistema Solar 3D TypeScript</div>
+    <div class="controls-info">Arrastra para rotar | Rueda del ratón para zoom | Click derecho para mover</div>
+    
+    <div class="control-panel">
+        <h2 class="text-xl font-bold mb-2">Panel de Control</h2>
+        
+        <div class="slider-container">
+            <label for="rotationSpeed">Velocidad de Rotación:</label>
+            <input type="range" id="rotationSpeed" class="slider" min="0" max="200" value="100">
+        </div>
+        
+        <div class="slider-container">
+            <label for="orbitSpeed">Velocidad de Órbita:</label>
+            <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100">
+        </div>
+        
+        <div class="button-row">
+            <!-- <button class="button" id="toggleAxes">Mostrar/Ocultar Ejes</button>-->
+            <button class="button" id="toggleMilkyWay">Mostrar/Ocultar Vía Láctea</button> 
+        </div>
+    </div>
+    
+    <div class="info-panel" id="infoPanel">
+        <h2 class="text-xl font-bold mb-2">Sistema Solar</h2>
+        <p class="mb-1">• Sol: Con corona solar y efectos de fuego</p>
+        <p class="mb-1">• Mercurio: El planeta más cercano al Sol</p>
+        <p class="mb-1">• Venus: El planeta más caliente</p>
+        <p class="mb-1">• Tierra: Nuestro hogar con su luna</p>
+        <p class="mb-1">• Marte: El planeta rojo</p>
+        <p class="mb-1">• Cinturón de Asteroides</p>
+        <p class="mb-1">• Júpiter: El planeta más grande</p>
+        <p class="mb-1">• Saturno: Con sus anillos característicos</p>
+        <p class="mb-1">• Urano: El planeta inclinado</p>
+        <p class="mb-1">• Neptuno: El planeta más lejano</p>
+        <p class="mt-3 text-sm italic">Haz clic en cualquier planeta para más información</p>
+    </div>
+    
+    <div class="planet-tooltip" id="planetTooltip"></div>
+    
+    <div class="planet-info" id="planetInfo">
+        <span class="close" onclick="closePlanetInfo()">&times;</span>
+        <div id="planetInfoContent"></div>
+    </div>
+    
+    <script src="../dist/solarSystem.bundle.js"></script>
+</body>
+</html>
+        <span class="close" id="closePlanetInfo">&times;</span>
+        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
+        <div id="planetInfoContent">
+            <!-- Contenido dinámico -->
+        </div>
+    </div>
+</body>
+</html>
