@@ -21,13 +21,13 @@ https://<NessGoodess>.github.io/<Graficacion>/
 ## 📸 Capturas de pantalla
 
 ### Menú principal
-![Menú principal](assets/captura_menu.png)
+![Menú principal](public/assets/captura_menu.png)
 
 ### Sistema Solar
-![Sistema Solar](assets/captura_solarsystem.png)
+![Sistema Solar](public/assets/captura_solarsystem.png)
 
 ### Frans Laboratory
-![Frans Laboratory](assets/captura_franslab.png)
+![Frans Laboratory](public/assets/captura_franslab.png)
 
 ## 🗂️ Estructura del proyecto
 
@@ -67,16 +67,17 @@ https://<NessGoodess>.github.io/<Graficacion>/
    ```bash
    npx serve dist
    ```
-   Luego abre:
-   Loopback: [http://localhost:9000/] 0 [http://[::1]:9000/]
-   IPV4: [http://192.168.1.106:9000/]
+4. Luego abre tu navegador y ve a:
+   - Localhost: http://localhost:9000/
 
 ## 📝 Créditos
 
 - **Nestor Yescas Ramos**  
-  [![NessGoodess](assets/Ness_Logo.png)](https://github.com/NessGoodess)
+  <a href="https://github.com/NessGoodess">
+    <img src="public/assets/Ness_Logo.png" alt="NessGoodess" width="50" height="50">
+  </a>
 - **Universidad Autónoma Benito Juárez de Oaxaca (UABJO)**  
-  ![UABJO](assets/Escudo_de_UABJO.png)
+  <img src="public/assets/Escudo_de_UABJO.png" alt="UABJO" width="50px" height="50px">
 
 ---
 
