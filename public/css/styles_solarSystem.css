@@ -140,44 +140,98 @@ canvas {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-
 /* Responsive Design for Mobile Devices */
 
 /* Tablets */
 @media (max-width: 768px) {
     .title {
-        font-size: 1.5rem;
-        top: 15px;
+        font-size: 1.2rem;
+        top: 10px;
     }
     
     .controls-info {
-        font-size: 0.9rem;
-        top: 55px;
+        font-size: 0.8rem;
+        top: 45px;
+        padding: 0 10px;
     }
     
     .control-panel {
-        top: 15px;
-        right: 15px;
-        padding: 12px;
-        max-width: 250px;
+        position: fixed;
+        top: auto;
+        bottom: 5px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        width: calc(100% - 20px);
+        padding: 0px 10px;
+        border-radius: 8px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .control-panel.collapsed {
+        transform: translateY(calc(100% - 40px));
     }
     
     .info-panel {
-        bottom: 15px;
-        left: 15px;
-        padding: 12px;
-        max-width: 250px;
+        display: none;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: auto;
+        max-width: none;
+        width: calc(100% - 20px);
+        padding: 10px;
+        border-radius: 8px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .info-panel.collapsed {
+        transform: translateY(calc(-100% + 40px));
+    }
+    
+    .button {
+        padding: 3px 5px;
+        font-size: 0.7rem;
+        margin: 2px;
+    }
+    
+    .slider-container {
+        margin: 0px 0;
+    }
+    
+    .slider-container label {
+        font-size: 0.7rem;
+        margin-bottom: 0px;
     }
     
     .planet-info {
-        max-width: 400px;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        transform: none;
+        max-width: none;
+        width: calc(100% - 40px);
+        height: calc(100% - 40px);
+        overflow-y: auto;
         padding: 15px;
-        margin: 10px;
     }
     
     .planet-info h2 {
-        font-size: 20px;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .planet-tooltip {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+    .text-xl {
+        font-size: 1rem;
     }
 }
 
