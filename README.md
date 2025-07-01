@@ -2,7 +2,7 @@
 
 Este repositorio contiene el proyecto final de la materia de Graficación, desarrollado en TypeScript y Webpack. Incluye dos experiencias interactivas:
 
-- **Frans Laboratory (Partículas)**: Inicialmente adapté el ejercicio clásico del laboratorio de Frans, reescribiéndolo en TypeScript para mejorar su estructura y rendimiento, agregando animación de partículas y conexiones dinámicas. Sin embargo, al finalizarlo sentí que era un reto muy sencillo y limitado, por lo que decidí complementar el proyecto desarrollando una segunda experiencia más compleja y visualmente atractiva.
+- **Frans Laboratory (Partículas)**: Inicialmente adapté el ejercicio clásico del laboratorio de Frans, reescribiéndolo en TypeScript para mejorar su estructura y rendimiento, agregando animación de partículas y conexiones dinámicas. Sin embargo, al finalizarlo sentí que era un reto muy sencillo y limitado, por lo que decidí agregarle un menu de control de numero de particulas y la velocidad, ademas de complementar el proyecto desarrollando una segunda experiencia más compleja y visualmente atractiva.
 
 - **Sistema Solar 3D**: Este es el proyecto principal que decidí desarrollar, inspirado y basado en los proyectos de Frans Laboratory. Utiliza muchas de las herramientas y técnicas vistas en esos ejercicios, pero adaptadas y extendidas para crear una experiencia original y más compleja, reescrita completamente en TypeScript. El resultado es una simulación visual y animada de un sistema solar, con controles interactivos y efectos avanzados.
 
