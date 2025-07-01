@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Solar 3D TypeScript</title>
+    <meta name="author" content="Nestor Yescas Ramos">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/styles_solarSystem.css">
 </head>
@@ -55,18 +56,11 @@
     <div class="planet-tooltip" id="planetTooltip"></div>
     
     <div class="planet-info" id="planetInfo">
-        <span class="close" onclick="closePlanetInfo()">&times;</span>
+        <span class="close" id="closePlanetInfo">&times;</span>
+        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
         <div id="planetInfoContent"></div>
     </div>
     
     <script src="../dist/solarSystem.bundle.js"></script>
-</body>
-</html>
-        <span class="close" id="closePlanetInfo">&times;</span>
-        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
-        <div id="planetInfoContent">
-            <!-- Contenido dinámico -->
-        </div>
-    </div>
 </body>
 </html>
