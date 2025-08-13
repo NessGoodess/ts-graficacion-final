@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Solar 3D TypeScript</title>
+    <meta name="author" content="Nestor Yescas Ramos">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/styles_solarSystem.css">
 </head>
@@ -31,9 +32,52 @@
             <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100">
         </div>
         
-        <div class="button-row">
-            <!-- <button class="button" id="toggleAxes">Mostrar/Ocultar Ejes</button>-->
-            <button class="button" id="toggleMilkyWay">Mostrar/Ocultar Vía Láctea</button> 
+        <div class="slider-container">
+            <label for="planetTilt">Inclinación de Planetas:</label>
+            <input type="range" id="planetTilt" class="slider" min="0" max="100" value="100">
+        </div>
+        
+        <style>
+            /* Custom switch animation for the dot */
+            .switch-input:checked + .switch-bg {
+                background-color: #3b82f6; /* blue-500 */
+            }
+            .switch-dot {
+                transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+            }
+            .switch-input:checked + .switch-bg .switch-dot {
+                transform: translateX(20px);
+            }
+        </style>
+        <div class="button-row flex flex-col gap-2">
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleAxes" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Ejes</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleMilkyWay" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Vía Láctea</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleAsteroidBeltKuiper" class="switch-input sr-only">
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                    <span class="ml-3">Cinturón de Kuiper</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleOrbitType" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Órbitas Elípticas</span>
+            </label>
         </div>
     </div>
     
@@ -55,18 +99,11 @@
     <div class="planet-tooltip" id="planetTooltip"></div>
     
     <div class="planet-info" id="planetInfo">
-        <span class="close" onclick="closePlanetInfo()">&times;</span>
+        <span class="close" id="closePlanetInfo">&times;</span>
+        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
         <div id="planetInfoContent"></div>
     </div>
     
     <script src="../dist/solarSystem.bundle.js"></script>
-</body>
-</html>
-        <span class="close" id="closePlanetInfo">&times;</span>
-        <h2 id="planetInfoTitle">Nombre del Planeta</h2>
-        <div id="planetInfoContent">
-            <!-- Contenido dinámico -->
-        </div>
-    </div>
 </body>
 </html>

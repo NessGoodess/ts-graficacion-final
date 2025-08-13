@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { createSun, Sun } from './models/Sun';
-import { createPlanet, Planet, createRings } from './models/Planet';
-import { createMoon, Moon } from './models/Moon';
 import { createAsteroidBelt, AsteroidBelt } from './models/AsteroidBelt'; 
-import { SolarFlare, AsteroidUserData } from './interfaces/SolarSystemInterfaces';
-import { planetData } from './data/planetData';
 import { createAxesHelper, toggleAxesVisibility } from './utils/helpers';
+import { createPlanet, Planet, createRings } from './models/Planet';
+import { AsteroidUserData } from './interfaces/SolarSystemInterfaces';
 import { configureShadows } from './utils/shadow';
+import { createSun, Sun } from './models/Sun';
+import { planetData } from './data/planetData';
+import { createMoon } from './models/Moon';
 
 // Configuración inicial
 const scene = new THREE.Scene();
@@ -45,10 +45,19 @@ let orbitSpeedFactor: number = 1;
 let hoveredPlanet: string | null = null;
 let selectedPlanet: string | null = null;
 
+//variables para control de inclinación
+let orbitInclinationX: number = 0;
+let orbitInclinationY: number = 0;
+let planetTiltFactor: number = 1;
+
+// Variable para controlar el tipo de órbita
+let useEllipticalOrbits: boolean = true;
+
 // Objetos del sistema solar
 let sun: Sun;
 let planets: Planet[] = [];
 let asteroidBelt: AsteroidBelt;
+let asteroidBeltKuiper: AsteroidBelt;
 
 // Variables globales para estrellas parpadeantes
 let twinklingStars: THREE.Points[] = [];
@@ -61,7 +70,7 @@ let sunLight: THREE.DirectionalLight;
 function createMilkyWay(): void {
     const milkyWayGeometry = new THREE.BufferGeometry();
     const milkyWayMaterial = new THREE.PointsMaterial({
-        color: 0xCCDDFF, // Color azulado para la Vía Láctea
+        color: 0xCCDDFF,
         size: 0.05,
         transparent: true,
         opacity: 0.6
@@ -70,11 +79,12 @@ function createMilkyWay(): void {
     const milkyWayVertices: number[] = [];
     
     // Crear una banda elíptica de estrellas (Vía Láctea)
-    for (let i = 0; i < 15000; i++) {
-        // Distribución elíptica para simular la Vía Láctea
+    for (let i = 0; i < 195000; i++) {
+        
         const angle = Math.random() * Math.PI * 2;
-        const radius = 800 + Math.random() * 400; // Banda ancha
-        const height = (Math.random() - 0.5) * 200; // Altura variable
+        const milkyWayBandWidth = 2000;
+        const radius = 120 + Math.random() * milkyWayBandWidth;
+        const height = (Math.random() - 0.5) * 200;
         
         // Crear forma elíptica
         const x = radius * Math.cos(angle) + (Math.random() - 0.5) * 300;
@@ -260,9 +270,48 @@ function animate(): void {
     });*/
     
     // Actualizar planetas
-    planets.forEach(planet => {
+
+    /*planets.forEach(planet => {
         planet.planet.rotation.y += planet.rotationSpeed * rotationSpeedFactor;
         planet.group.rotation.y += planet.orbitSpeed * orbitSpeedFactor;
+    });*/
+    planets.forEach(planet => {
+        planet.planet.rotation.y += planet.rotationSpeed * rotationSpeedFactor;
+        // Calcular el ángulo de la órbita
+        if (!planet.group.userData.angle) planet.group.userData.angle = Math.random() * Math.PI * 2;
+        planet.group.userData.angle += planet.orbitSpeed * orbitSpeedFactor;
+        const angle = planet.group.userData.angle;
+        
+        // Calcular posición base en el plano XY según el tipo de órbita
+        let baseX: number, baseZ: number;
+        
+        if (useEllipticalOrbits) {
+            // Órbita elíptica
+            baseX = planet.a * Math.cos(angle);
+            baseZ = planet.b * Math.sin(angle);
+        } else {
+            // Órbita circular
+            baseX = planet.distance * Math.cos(angle);
+            baseZ = planet.distance * Math.sin(angle);
+        }
+        
+        // Aplicar inclinaciones de órbita individuales del planeta
+        const cosX = Math.cos(planet.orbitInclinationX * Math.PI / 180);
+        const sinX = Math.sin(planet.orbitInclinationX * Math.PI / 180);
+        const cosY = Math.cos(planet.orbitInclinationY * Math.PI / 180);
+        const sinY = Math.sin(planet.orbitInclinationY * Math.PI / 180);
+        
+        // Rotación en X (inclinación hacia arriba/abajo)
+        const rotatedX = baseX;
+        const rotatedY = baseZ * sinX;
+        const rotatedZ = baseZ * cosX;
+        
+        // Rotación en Y (inclinación lateral)
+        const finalX = rotatedX * cosY - rotatedY * sinY;
+        const finalY = rotatedX * sinY + rotatedY * cosY;
+        const finalZ = rotatedZ;
+        
+        planet.group.position.set(finalX, finalY, finalZ);
     });
     
     // Animar cinturón de asteroides
@@ -275,8 +324,16 @@ function animate(): void {
             asteroid.rotation.z += userData.rotationSpeed.z * rotationSpeedFactor;
             
             userData.angle += userData.orbitSpeed * orbitSpeedFactor;
-            asteroid.position.x = Math.cos(userData.angle) * userData.radius;
-            asteroid.position.z = Math.sin(userData.angle) * userData.radius;
+            
+            // Calcular posición según el tipo de órbita
+            if (useEllipticalOrbits) {
+                asteroid.position.x = Math.cos(userData.angle) * userData.a;
+                asteroid.position.z = Math.sin(userData.angle) * userData.b;
+            } else {
+                // Para órbitas circulares, usar el radio como distancia
+                asteroid.position.x = Math.cos(userData.angle) * userData.radius;
+                asteroid.position.z = Math.sin(userData.angle) * userData.radius;
+            }
         });
     }
     
@@ -326,14 +383,14 @@ function initSolarSystem(): void {
     scene.add(directionalLight);
     
     // Crear planetas
-    const mercury = createPlanet(scene, 0.4, 0xaaaaaa, 8, "Mercurio");
-    const venus = createPlanet(scene, 0.9, 0xe39e1c, 12, "Venus");
-    const earth = createPlanet(scene, 1, 0x2233ff, 16, "Tierra");
-    const mars = createPlanet(scene, 0.7, 0xdd4422, 20, "Marte");
-    const jupiter = createPlanet(scene, 3, 0xeebb99, 28, "Júpiter");
-    const saturn = createPlanet(scene, 2.5, 0xddcc88, 36, "Saturno");
-    const uranus = createPlanet(scene, 1.8, 0x88ccff, 44, "Urano", 97);
-    const neptune = createPlanet(scene, 1.7, 0x3355dd, 52, "Neptuno");
+    const mercury = createPlanet(scene, 0.4, 0xaaaaaa, 8, "Mercurio",0,0,65, useEllipticalOrbits);
+    const venus = createPlanet(scene, 0.9, 0xe39e1c, 12, "Venus",0,0,-65, useEllipticalOrbits);
+    const earth = createPlanet(scene, 1, 0x2233ff, 16, "Tierra",0,0,0, useEllipticalOrbits);
+    const mars = createPlanet(scene, 0.7, 0xdd4422, 20, "Marte",0,0,55, useEllipticalOrbits);
+    const jupiter = createPlanet(scene, 3, 0xeebb99, 28, "Júpiter",0,0,45, useEllipticalOrbits);
+    const saturn = createPlanet(scene, 2.5, 0xddcc88, 36, "Saturno",0,0, -45, useEllipticalOrbits);
+    const uranus = createPlanet(scene, 1.8, 0x88ccff, 44, "Urano", 97,0,25, useEllipticalOrbits);
+    const neptune = createPlanet(scene, 1.7, 0x3355dd, 52, "Neptuno",0,0,-25, useEllipticalOrbits);
     
     // Agregar ejes a todos los planetas
     axesHelpers.push(createAxesHelper(mercury.group, 0.6));
@@ -362,7 +419,7 @@ function initSolarSystem(): void {
     createRings(uranus, 2.6, 2.8, 0x999999);
     createRings(uranus, 2.8, 3,0xcccccc );
     // Crear cinturón de asteroides
-    asteroidBelt = createAsteroidBelt(scene, 22, 26, 200);
+    asteroidBelt = createAsteroidBelt(scene, 22, 26, 500, useEllipticalOrbits);
     
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
     
@@ -387,6 +444,183 @@ function toggleMilkyWay(): void {
     }
 }
 
+function toggleAsteroidBeltKuiper(): void {
+    if (asteroidBeltKuiper) {   
+        asteroidBeltKuiper.group.visible = !asteroidBeltKuiper.group.visible;
+    } else {
+        asteroidBeltKuiper = createAsteroidBelt(scene, 62, 120, 6000);
+        asteroidBeltKuiper.group.visible = true;
+    }
+}
+
+function toggleOrbitType(): void {
+    // Obtener el estado actual del checkbox
+    const toggleButton = document.getElementById('toggleOrbitType') as HTMLInputElement;
+    useEllipticalOrbits = toggleButton.checked;
+    
+    console.log('Cambiando a órbitas:', useEllipticalOrbits ? 'Elípticas' : 'Circulares');
+    
+    // Remover órbitas existentes de manera más robusta
+    const orbitsToRemove: THREE.Object3D[] = [];
+    scene.children.forEach(child => {
+        if (child.userData && child.userData.isOrbit) {
+            orbitsToRemove.push(child);
+        }
+    });
+    
+    // Remover las órbitas encontradas
+    orbitsToRemove.forEach(orbit => {
+        scene.remove(orbit);
+        // También limpiar la geometría y material para liberar memoria
+        if (orbit instanceof THREE.Mesh) {
+            orbit.geometry.dispose();
+            if (orbit.material instanceof THREE.Material) {
+                orbit.material.dispose();
+            }
+        }
+    });
+    
+    console.log('Órbitas removidas:', orbitsToRemove.length);
+    
+    // Recrear órbitas con el nuevo tipo
+    planets.forEach(planet => {
+        let orbit: THREE.Mesh;
+        
+        if (useEllipticalOrbits) {
+            // Órbita elíptica
+            const a = planet.distance;      // Semieje mayor
+            const b = planet.distance * 0.7; // Semieje menor
+            
+            const segments = 128;
+            const outerPoints: THREE.Vector2[] = [];
+            const innerPoints: THREE.Vector2[] = [];
+            for (let i = 0; i <= segments; i++) {
+                const theta = (i / segments) * Math.PI * 2;
+                outerPoints.push(new THREE.Vector2(a * Math.cos(theta), b * Math.sin(theta)));
+                innerPoints.push(new THREE.Vector2((a - 0.05) * Math.cos(theta), (b - 0.05) * Math.sin(theta)));
+            }
+            
+            const orbitShape = new THREE.Shape(outerPoints);
+            orbitShape.holes.push(new THREE.Path(innerPoints));
+            const geometry = new THREE.ShapeGeometry(orbitShape);
+            
+            const orbitMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.2
+            });
+            orbit = new THREE.Mesh(geometry, orbitMaterial);
+        } else {
+            // Órbita circular
+            const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 64);
+            const orbitMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.2
+            });
+            orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+        }
+        
+        orbit.rotation.x = Math.PI / 2 + planet.orbitInclinationX * Math.PI / 180;
+        orbit.rotation.y = planet.orbitInclinationY * Math.PI / 180;
+        orbit.userData = { isOrbit: true, isElliptical: useEllipticalOrbits };
+        scene.add(orbit);
+    });
+    
+    console.log('Órbitas recreadas:', planets.length);
+    
+    // Recrear cinturón de asteroides con el nuevo tipo de órbita
+    if (asteroidBelt) {
+        // Remover el cinturón existente
+        scene.remove(asteroidBelt.group);
+        asteroidBelt.asteroids.forEach(asteroid => {
+            asteroid.geometry.dispose();
+            if (asteroid.material instanceof THREE.Material) {
+                asteroid.material.dispose();
+            }
+        });
+        
+        // Crear nuevo cinturón con el tipo de órbita correcto
+        asteroidBelt = createAsteroidBelt(scene, 22, 26, 500, useEllipticalOrbits);
+    }
+    
+    // Reiniciar las posiciones de los planetas para evitar saltos bruscos
+    planets.forEach(planet => {
+        if (planet.group.userData.angle) {
+            const angle = planet.group.userData.angle;
+            let baseX: number, baseZ: number;
+            
+            if (useEllipticalOrbits) {
+                baseX = planet.a * Math.cos(angle);
+                baseZ = planet.b * Math.sin(angle);
+            } else {
+                baseX = planet.distance * Math.cos(angle);
+                baseZ = planet.distance * Math.sin(angle);
+            }
+            
+            // Aplicar inclinaciones
+            const cosX = Math.cos(planet.orbitInclinationX * Math.PI / 180);
+            const sinX = Math.sin(planet.orbitInclinationX * Math.PI / 180);
+            const cosY = Math.cos(planet.orbitInclinationY * Math.PI / 180);
+            const sinY = Math.sin(planet.orbitInclinationY * Math.PI / 180);
+            
+            const rotatedX = baseX;
+            const rotatedY = baseZ * sinX;
+            const rotatedZ = baseZ * cosX;
+            
+            const finalX = rotatedX * cosY - rotatedY * sinY;
+            const finalY = rotatedX * sinY + rotatedY * cosY;
+            const finalZ = rotatedZ;
+            
+            planet.group.position.set(finalX, finalY, finalZ);
+        }
+    });
+    
+    // Actualizar el texto del botón
+    const label = toggleButton?.nextElementSibling?.nextElementSibling as HTMLElement;
+    if (label) {
+        label.textContent = useEllipticalOrbits ? 'Órbitas Elípticas' : 'Órbitas Circulares';
+    }
+}
+
+function updateOrbitInclinationY(value: number): void {
+    orbitInclinationY = value;
+    // Actualizar todas las órbitas visibles
+    scene.children.forEach(child => {
+        if (child.userData && child.userData.isOrbit) {
+            child.rotation.y = orbitInclinationY * Math.PI / 180;
+        }
+    });
+}
+function updatePlanetTilt(value: number): void {
+    planetTiltFactor = value;
+    // Actualizar la inclinación de todos los planetas
+    planets.forEach(planet => {
+        // Aplicar inclinación basada en el factor y la inclinación original del planeta
+        const originalTilt = planet.planet.userData.originalTilt || 0;
+        planet.planet.rotation.z = (originalTilt * planetTiltFactor) * Math.PI / 180;
+    });
+}
+function resetInclinations(): void {
+    orbitInclinationX = 0;
+    orbitInclinationY = 0;
+    planetTiltFactor = 1;
+    
+    // Actualizar controles UI
+    const orbitInclinationXSlider = document.getElementById('orbitInclinationX') as HTMLInputElement;
+    const orbitInclinationYSlider = document.getElementById('orbitInclinationY') as HTMLInputElement;
+    const planetTiltSlider = document.getElementById('planetTilt') as HTMLInputElement;
+    
+    if (orbitInclinationXSlider) orbitInclinationXSlider.value = '0';
+    if (orbitInclinationYSlider) orbitInclinationYSlider.value = '0';
+    if (planetTiltSlider) planetTiltSlider.value = '100';
+    
+    updateOrbitInclinationY(0);
+    updatePlanetTilt(1);
+}
+
 // Event listeners
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -400,6 +634,8 @@ document.addEventListener('click', onMouseClick);
 document.getElementById('toggleAxes')?.addEventListener('click', toggleAxes);
 
 document.getElementById('toggleMilkyWay')?.addEventListener('click', toggleMilkyWay);
+document.getElementById('toggleAsteroidBeltKuiper')?.addEventListener('click', toggleAsteroidBeltKuiper);
+document.getElementById('toggleOrbitType')?.addEventListener('click', toggleOrbitType);
 
 document.getElementById('closePlanetInfo')?.addEventListener('click', closePlanetInfo);
 
@@ -414,7 +650,32 @@ orbitSpeedSlider?.addEventListener('input', function(e) {
     const target = e.target as HTMLInputElement;
     orbitSpeedFactor = parseInt(target.value) / 100;
 });
+const orbitInclinationYSlider = document.getElementById('orbitInclinationY') as HTMLInputElement;
+orbitInclinationYSlider?.addEventListener('input', function(e) {
+    const target = e.target as HTMLInputElement;
+    updateOrbitInclinationY(parseInt(target.value));
+});
+
+const planetTiltSlider = document.getElementById('planetTilt') as HTMLInputElement;
+planetTiltSlider?.addEventListener('input', function(e) {
+    const target = e.target as HTMLInputElement;
+    updatePlanetTilt(parseInt(target.value) / 100);
+});
+
+document.getElementById('resetInclinations')?.addEventListener('click', resetInclinations);
+
 
 // Iniciar
 initSolarSystem();
+
+// Inicializar el estado del botón de órbitas
+const toggleOrbitButton = document.getElementById('toggleOrbitType') as HTMLInputElement;
+if (toggleOrbitButton) {
+    toggleOrbitButton.checked = useEllipticalOrbits;
+    const label = toggleOrbitButton.nextElementSibling?.nextElementSibling as HTMLElement;
+    if (label) {
+        label.textContent = useEllipticalOrbits ? 'Órbitas Elípticas' : 'Órbitas Circulares';
+    }
+}
+
 animate();

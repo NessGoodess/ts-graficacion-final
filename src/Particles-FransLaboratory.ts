@@ -11,6 +11,18 @@ gradient.addColorStop(1, 'blue');
 ctx.fillStyle = gradient;
 ctx.strokeStyle = 'white';
 
+// --- CONTROLES DE UI ---
+const particleCountSelect = document.getElementById('particleCount') as HTMLSelectElement;
+const particleSpeedSlider = document.getElementById('particleSpeed') as HTMLInputElement;
+
+let globalSpeed = Number(particleSpeedSlider?.value) || 5;
+
+particleSpeedSlider?.addEventListener('input', () => {
+    globalSpeed = Number(particleSpeedSlider.value);
+    // velocidad de todas las partículas activas
+    effect?.particles.forEach(p => p.setSpeed(globalSpeed));
+});
+
 class Particle {
     effect: Effect;
     radius: number;
@@ -18,14 +30,25 @@ class Particle {
     y: number;
     vx: number;
     vy: number;
+    maxSpeed: number;
 
     constructor(effect: Effect) {
         this.effect = effect;
         this.radius = Math.random() * 5 + 2;
         this.x = this.radius + Math.random() * (this.effect.width - this.radius * 2);
         this.y = this.radius + Math.random() * (this.effect.height - this.radius * 2);
-        this.vx = Math.random() * 2 - 0.5;
-        this.vy = Math.random() * 2 - 0.5;
+        this.maxSpeed = globalSpeed;
+        this.vx = 0;
+        this.vy = 0;
+        this.setSpeed(globalSpeed);
+    }
+
+    setSpeed(speed: number) {
+        this.maxSpeed = speed;
+        const angle = Math.atan2(this.vy ?? 0, this.vx ?? 0);
+        const v = Math.random() * speed;
+        this.vx = Math.cos(angle) * v || (Math.random() * 2 - 1) * speed;
+        this.vy = Math.sin(angle) * v || (Math.random() * 2 - 1) * speed;
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -36,9 +59,18 @@ class Particle {
 
     update() {
         this.x += this.vx;
-        if (this.x > this.effect.width - this.radius || this.x < this.radius) this.vx *= -1;
         this.y += this.vy;
-        if (this.y > this.effect.height - this.radius || this.y < this.radius) this.vy *= -1;
+        // Limitar velocidad máxima
+        const v = Math.hypot(this.vx, this.vy);
+        if (v > this.maxSpeed) {
+            this.vx = (this.vx / v) * this.maxSpeed;
+            this.vy = (this.vy / v) * this.maxSpeed;
+        }
+        // Rebote en bordes
+        if (this.x > this.effect.width - this.radius) { this.x = this.effect.width - this.radius; this.vx *= -1; }
+        if (this.x < this.radius) { this.x = this.radius; this.vx *= -1; }
+        if (this.y > this.effect.height - this.radius) { this.y = this.effect.height - this.radius; this.vy *= -1; }
+        if (this.y < this.radius) { this.y = this.radius; this.vy *= -1; }
     }
 }
 
@@ -49,16 +81,17 @@ class Effect {
     particles: Particle[];
     numberOfParticles: number;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, numberOfParticles: number) {
         this.canvas = canvas;
         this.width = this.canvas.width;
         this.height = this.canvas.height;
         this.particles = [];
-        this.numberOfParticles = 600;
+        this.numberOfParticles = numberOfParticles;
         this.createParticles();
     }
 
     createParticles() {
+        this.particles = [];
         for (let i = 0; i < this.numberOfParticles; i++) {
             this.particles.push(new Particle(this));
         }
@@ -94,7 +127,25 @@ class Effect {
     }
 }
 
-const effect = new Effect(canvas);
+    // INICIALIZACIÓN Y REINICIO
+let effect = new Effect(canvas, Number(particleCountSelect?.value) || 600);
+
+function restartEffect() {
+    effect = new Effect(canvas, Number(particleCountSelect.value));
+    effect.particles.forEach(p => p.setSpeed(globalSpeed));
+}
+
+particleCountSelect?.addEventListener('change', () => {
+    restartEffect();
+});
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    effect.width = canvas.width;
+    effect.height = canvas.height;
+    restartEffect();
+});
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -8,6 +8,10 @@ export interface Planet {
     orbitSpeed: number;
     name: string;
     size: number;
+    a: number;
+    b: number;
+    orbitInclinationX: number;
+    orbitInclinationY: number;
 }
 
 export function createPlanet(
@@ -16,21 +20,56 @@ export function createPlanet(
     color: number,
     distance: number,
     name: string,
-    tilt: number = 0
+    tilt: number = 0,
+    orbitInclinationX: number = 0,
+    orbitInclinationY: number = 0,
+    useEllipticalOrbit: boolean = true,
 ): Planet {
     const planetGroup = new THREE.Group();
     scene.add(planetGroup);
 
-    // Órbita visible
-    const orbitGeometry = new THREE.RingGeometry(distance - 0.05, distance + 0.05, 64);
-    const orbitMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.2
-    });
-    const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-    orbit.rotation.x = Math.PI / 2;
+    let orbit: THREE.Mesh;
+
+    if (useEllipticalOrbit) {
+        // Órbita visible elíptica
+        const a = distance;      // Semieje mayor
+        const b = distance * 0.7; // Semieje menor (ajusta el factor para la excentricidad)
+
+        const segments = 128;
+        const outerPoints: THREE.Vector2[] = [];
+        const innerPoints: THREE.Vector2[] = [];
+        for (let i = 0; i <= segments; i++) {
+            const theta = (i / segments) * Math.PI * 2;
+            outerPoints.push(new THREE.Vector2(a * Math.cos(theta), b * Math.sin(theta)));
+            innerPoints.push(new THREE.Vector2((a - 0.05) * Math.cos(theta), (b - 0.05) * Math.sin(theta)));
+        }
+
+        const orbitShape = new THREE.Shape(outerPoints);
+        orbitShape.holes.push(new THREE.Path(innerPoints));
+        const geometry = new THREE.ShapeGeometry(orbitShape);
+
+        const orbitMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.2
+        });
+        orbit = new THREE.Mesh(geometry, orbitMaterial);
+    } else {
+        // Órbita visible circular
+        const orbitGeometry = new THREE.RingGeometry(distance - 0.05, distance + 0.05, 64);
+        const orbitMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.2
+        });
+        orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+    }
+
+    orbit.rotation.x = Math.PI / 2 + orbitInclinationX * Math.PI / 180;
+    orbit.rotation.y = orbitInclinationY * Math.PI / 180;
+    orbit.userData = { isOrbit: true, isElliptical: useEllipticalOrbit };
     scene.add(orbit);
 
     // Planeta
@@ -44,12 +83,18 @@ export function createPlanet(
 
     const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-    planet.position.x = distance;
+    planet.position.x = 0;
     planet.castShadow = true;
     planet.receiveShadow = true;
+    //planet.rotation.y
     planet.rotation.z = tilt * Math.PI / 180;
+    planet.userData = { name: name, originalTilt: tilt };
     planetGroup.add(planet);
-    planet.userData = { name: name };
+    //planet.userData = { name: name };
+
+    // Calcular a y b para el retorno
+    const a = distance;      // Semieje mayor
+    const b = distance * 0.7; // Semieje menor
 
     return {
         group: planetGroup,
@@ -58,7 +103,11 @@ export function createPlanet(
         rotationSpeed: 0.01 + Math.random() * 0.01,
         orbitSpeed: 0.005 / (distance / 10),
         name: name,
-        size: size
+        size: size,
+        a: a,
+        b: b,
+        orbitInclinationX: orbitInclinationX,
+        orbitInclinationY: orbitInclinationY
     };
 }
 

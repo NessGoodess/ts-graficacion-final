@@ -10,7 +10,8 @@ export function createAsteroidBelt(
     scene: THREE.Scene,
     innerRadius: number,
     outerRadius: number,
-    count: number
+    count: number,
+    useEllipticalOrbit: boolean = true
 ): AsteroidBelt {
     const asteroidGroup = new THREE.Group();
     scene.add(asteroidGroup);
@@ -46,9 +47,18 @@ export function createAsteroidBelt(
         const angle = Math.random() * Math.PI * 2;
         const height = (Math.random() - 0.5) * 2;
         
-        asteroid.position.x = Math.cos(angle) * radius;
+        let a: number, b: number;
+        if (useEllipticalOrbit) {
+            a = radius;
+            b = radius * 0.7;
+        } else {
+            a = radius;
+            b = radius; // Para órbitas circulares, ambos ejes son iguales
+        }
+        
+        asteroid.position.x = a * Math.cos(angle);
         asteroid.position.y = height;
-        asteroid.position.z = Math.sin(angle) * radius;
+        asteroid.position.z = b * Math.sin(angle);
         
         asteroid.rotation.x = Math.random() * Math.PI;
         asteroid.rotation.y = Math.random() * Math.PI;
@@ -63,7 +73,9 @@ export function createAsteroidBelt(
                 y: (Math.random() - 0.5) * 0.02,
                 z: (Math.random() - 0.5) * 0.02
             },
-            orbitSpeed: 0.001 + Math.random() * 0.002
+            orbitSpeed: 0.001 + Math.random() * 0.002,
+            a: a,
+            b: b
         };
         
         asteroid.userData = userData;

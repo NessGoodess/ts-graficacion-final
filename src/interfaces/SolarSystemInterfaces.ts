@@ -29,4 +29,6 @@ export interface AsteroidUserData {
         z: number;
     };
     orbitSpeed: number;
+    a: number;
+    b: number;
 }
