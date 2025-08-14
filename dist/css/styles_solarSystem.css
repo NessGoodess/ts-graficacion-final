@@ -18,6 +18,31 @@ canvas {
     max-width: 300px;
     z-index: 100;
 }
+.author-info {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 1rem;
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 100;
+}
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .title {
     position: absolute;
     top: 20px;
@@ -191,6 +216,15 @@ canvas {
     .info-panel.collapsed {
         transform: translateY(calc(-100% + 40px));
     }
+
+    .author-info {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: white;
+        font-size: 1rem;
+    }
     
     .button {
         padding: 3px 5px;
@@ -231,6 +265,15 @@ canvas {
         padding: 4px 8px;
     }
     .text-xl {
+        font-size: 1rem;
+    }
+
+    .author-info {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: white;
         font-size: 1rem;
     }
 }
@@ -324,6 +367,15 @@ canvas {
         padding: 4px 8px;
     }
     .text-xl {
+        font-size: 1rem;
+    }
+
+    .author-info {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: white;
         font-size: 1rem;
     }
 }

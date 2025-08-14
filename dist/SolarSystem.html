@@ -32,10 +32,7 @@
             <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100">
         </div>
         
-        <div class="slider-container">
-            <label for="planetTilt">Inclinación de Planetas:</label>
-            <input type="range" id="planetTilt" class="slider" min="0" max="100" value="100">
-        </div>
+
         
         <style>
             /* Custom switch animation for the dot */
@@ -51,7 +48,7 @@
         </style>
         <div class="button-row flex flex-col gap-2">
             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" id="toggleAxes" class="switch-input sr-only" checked>
+                <input type="checkbox" id="toggleAxes" class="switch-input sr-only">
                 <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
                     <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
                 </div>
@@ -78,6 +75,13 @@
                 </div>
                 <span class="ml-3">Órbitas Elípticas</span>
             </label>
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleOrbitInclination" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Inclinación de Órbita</span>
+            </label>
         </div>
     </div>
     
@@ -94,6 +98,16 @@
         <p class="mb-1">• Urano: El planeta inclinado</p>
         <p class="mb-1">• Neptuno: El planeta más lejano</p>
         <p class="mt-3 text-sm italic">Haz clic en cualquier planeta para más información</p>
+    </div>
+
+    <div class="author-info">
+        <div class="profile-picture">
+            <img src="./assets/Ness_Logo.png" alt="Profile Picture">
+        </div>
+        <div class="author-info-content">
+            <p>Autor: Nestor Yescas Ramos</p>
+            <p>GitHub: <a href="https://github.com/NessGoodess" target="_blank">NessGoodess</a></p>
+        </div>
     </div>
     
     <div class="planet-tooltip" id="planetTooltip"></div>
