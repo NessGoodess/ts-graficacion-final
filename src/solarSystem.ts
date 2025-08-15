@@ -33,6 +33,16 @@ camera.position.z = 50;
 camera.position.y = 20;
 camera.lookAt(0, 0, 0);
 
+// Función para actualizar la posición de la cámara cuando el Sol orbita
+function updateCameraPosition(): void {
+    if (sunOrbitEnabled) {
+        camera.position.x = sun.group.position.x;
+        camera.position.z = sun.group.position.z + 50; // Mantener distancia Z
+        camera.position.y = 20; // Mantener altura Y
+        controls.target.set(sun.group.position.x, 0, sun.group.position.z);
+    }
+}
+
 // Raycaster para interacciones
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -53,6 +63,8 @@ let orbitInclinationY: number = 0;
 let useEllipticalOrbits: boolean = true;
 // Variable para controlar si las órbitas tienen inclinación en Y
 let useOrbitInclinationY: boolean = true;
+// Variable para controlar si las órbitas son visibles
+let orbitsVisible: boolean = true;
 
 // Objetos del sistema solar
 let sun: Sun;
@@ -63,6 +75,11 @@ let asteroidBeltKuiper: AsteroidBelt;
 // Variables globales para estrellas parpadeantes
 let twinklingStars: THREE.Points[] = [];
 let milkyWay: THREE.Points;
+// Variables para la órbita del Sol
+let sunOrbitRadius: number = 1000;
+let sunOrbitSpeed: number = 0.0001;
+let sunOrbitAngle: number = 0;
+let sunOrbitEnabled: boolean = true;
 
 // Al inicio del archivo
 let sunLight: THREE.DirectionalLight;
@@ -250,8 +267,24 @@ function animate(): void {
     
     const time = Date.now() * 0.001;
     
-    // Rotación del sol
+    // Rotación del sol sobre su eje
     sun.group.rotation.y += 0.002 * rotationSpeedFactor;
+    
+    // Órbita del Sol alrededor del centro de la Vía Láctea
+    if (sunOrbitEnabled) {
+        sunOrbitAngle += sunOrbitSpeed * orbitSpeedFactor;
+        
+        // Calcular nueva posición del Sol
+        const sunX = Math.cos(sunOrbitAngle) * sunOrbitRadius;
+        const sunZ = Math.sin(sunOrbitAngle) * sunOrbitRadius;
+        
+        // Mover todo el sistema solar (incluyendo el Sol)
+        sun.group.position.x = sunX;
+        sun.group.position.z = sunZ;
+        
+        // Actualizar la posición de la cámara para seguir al Sol
+        updateCameraPosition();
+    }
     
     // Animar corona solar
     sun.corona.forEach((layer, index) => {
@@ -308,7 +341,14 @@ function animate(): void {
             finalZ = rotatedZ;
         }
         
+        // Aplicar la posición orbital del planeta
         planet.group.position.set(finalX, finalY, finalZ);
+        
+        // Si el Sol está orbitando, mover los planetas junto con él
+        if (sunOrbitEnabled) {
+            planet.group.position.x += sun.group.position.x;
+            planet.group.position.z += sun.group.position.z;
+        }
     });
     
     // Animar cinturón de asteroides
@@ -330,6 +370,41 @@ function animate(): void {
                 // Para órbitas circulares, usar el radio como distancia
                 asteroid.position.x = Math.cos(userData.angle) * userData.radius;
                 asteroid.position.z = Math.sin(userData.angle) * userData.radius;
+            }
+            
+            // Si el Sol está orbitando, mover los asteroides junto con él
+            if (sunOrbitEnabled) {
+                asteroid.position.x += sun.group.position.x;
+                asteroid.position.z += sun.group.position.z;
+            }
+        });
+    }
+    
+    // Animar cinturón de Kuiper si está visible
+    if (asteroidBeltKuiper && asteroidBeltKuiper.group.visible) {
+        asteroidBeltKuiper.asteroids.forEach(asteroid => {
+            const userData = asteroid.userData as AsteroidUserData;
+            
+            asteroid.rotation.x += userData.rotationSpeed.x * rotationSpeedFactor;
+            asteroid.rotation.y += userData.rotationSpeed.y * rotationSpeedFactor;
+            asteroid.rotation.z += userData.rotationSpeed.z * rotationSpeedFactor;
+            
+            userData.angle += userData.orbitSpeed * orbitSpeedFactor;
+            
+            // Calcular posición según el tipo de órbita
+            if (useEllipticalOrbits) {
+                asteroid.position.x = Math.cos(userData.angle) * userData.a;
+                asteroid.position.z = Math.sin(userData.angle) * userData.b;
+            } else {
+                // Para órbitas circulares, usar el radio como distancia
+                asteroid.position.x = Math.cos(userData.angle) * userData.radius;
+                asteroid.position.z = Math.sin(userData.angle) * userData.radius;
+            }
+            
+            // Si el Sol está orbitando, mover los asteroides junto con él
+            if (sunOrbitEnabled) {
+                asteroid.position.x += sun.group.position.x;
+                asteroid.position.z += sun.group.position.z;
             }
         });
     }
@@ -446,6 +521,35 @@ function toggleMilkyWay(): void {
     }
 }
 
+function toggleSunOrbit(): void {
+    // Obtener el estado actual del checkbox
+    const toggleButton = document.getElementById('toggleSunOrbit') as HTMLInputElement;
+    sunOrbitEnabled = toggleButton.checked;
+    
+    console.log('Órbita del Sol:', sunOrbitEnabled ? 'Activada' : 'Desactivada');
+    
+    // Si se desactiva la órbita, reposicionar la cámara al centro
+    if (!sunOrbitEnabled) {
+        camera.position.set(0, 20, 50);
+        controls.target.set(0, 0, 0);
+        sun.group.position.set(0, 0, 0);
+        sunOrbitAngle = 0; // Resetear el ángulo de órbita
+    }
+}
+
+function resetCameraPosition(): void {
+    if (sunOrbitEnabled) {
+        // Si la órbita está activada, centrar la cámara en el Sol
+        updateCameraPosition();
+    } else {
+        // Si la órbita está desactivada, centrar en el origen
+        camera.position.set(0, 20, 50);
+        controls.target.set(0, 0, 0);
+    }
+    
+    console.log('Posición de cámara reseteada');
+}
+
 function toggleAsteroidBeltKuiper(): void {
     if (asteroidBeltKuiper) {   
         asteroidBeltKuiper.group.visible = !asteroidBeltKuiper.group.visible;
@@ -528,6 +632,7 @@ function toggleOrbitType(): void {
         orbit.rotation.x = Math.PI / 2 + planet.orbitInclinationX * Math.PI / 180;
         orbit.rotation.y = useOrbitInclinationY ? planet.orbitInclinationY * Math.PI / 180 : 0;
         orbit.userData = { isOrbit: true, isElliptical: useEllipticalOrbits };
+        orbit.visible = orbitsVisible;
         scene.add(orbit);
     });
     
@@ -690,6 +795,7 @@ function toggleOrbitInclination(): void {
         orbit.rotation.x = Math.PI / 2 + planet.orbitInclinationX * Math.PI / 180;
         orbit.rotation.y = useOrbitInclinationY ? planet.orbitInclinationY * Math.PI / 180 : 0;
         orbit.userData = { isOrbit: true, isElliptical: useEllipticalOrbits };
+        orbit.visible = orbitsVisible;
         scene.add(orbit);
     });
     
@@ -710,7 +816,23 @@ function toggleOrbitInclination(): void {
         asteroidBeltKuiper = createAsteroidBelt(scene, 62, 120, 6000, useEllipticalOrbits);
         asteroidBeltKuiper.group.visible = true;
     }
+}
+
+function toggleOrbits(): void {
+    // Obtener el estado actual del checkbox
+    const toggleButton = document.getElementById('toggleOrbits') as HTMLInputElement;
+    orbitsVisible = toggleButton.checked;
     
+    console.log('Cambiando visibilidad de órbitas:', orbitsVisible ? 'Mostrar' : 'Ocultar');
+    
+    // Actualizar todas las órbitas existentes
+    scene.children.forEach(child => {
+        if (child.userData && child.userData.isOrbit) {
+            child.visible = orbitsVisible;
+        }
+    });
+    
+    console.log('Visibilidad de órbitas actualizada');
 }
 
 
@@ -728,9 +850,12 @@ document.addEventListener('click', onMouseClick);
 document.getElementById('toggleAxes')?.addEventListener('click', toggleAxes);
 
 document.getElementById('toggleMilkyWay')?.addEventListener('click', toggleMilkyWay);
+document.getElementById('toggleSunOrbit')?.addEventListener('click', toggleSunOrbit);
+document.getElementById('resetCameraPosition')?.addEventListener('click', resetCameraPosition);
 document.getElementById('toggleAsteroidBeltKuiper')?.addEventListener('click', toggleAsteroidBeltKuiper);
 document.getElementById('toggleOrbitType')?.addEventListener('click', toggleOrbitType);
 document.getElementById('toggleOrbitInclination')?.addEventListener('click', toggleOrbitInclination);
+document.getElementById('toggleOrbits')?.addEventListener('click', toggleOrbits);
 
 document.getElementById('closePlanetInfo')?.addEventListener('click', closePlanetInfo);
 

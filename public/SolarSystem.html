@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/styles_solarSystem.css">
 </head>
+
 <body>
     <div class="loading" id="loading">
         <div>
@@ -18,35 +20,28 @@
 
     <div class="title">Sistema Solar 3D TypeScript</div>
     <div class="controls-info">Arrastra para rotar | Rueda del ratón para zoom | Click derecho para mover</div>
-    
+
     <div class="control-panel">
         <h2 class="text-xl font-bold mb-2">Panel de Control</h2>
-        
+
         <div class="slider-container">
             <label for="rotationSpeed">Velocidad de Rotación:</label>
             <input type="range" id="rotationSpeed" class="slider" min="0" max="200" value="100">
         </div>
-        
+
         <div class="slider-container">
             <label for="orbitSpeed">Velocidad de Órbita:</label>
             <input type="range" id="orbitSpeed" class="slider" min="0" max="200" value="100">
         </div>
-        
 
-        
-        <style>
-            /* Custom switch animation for the dot */
-            .switch-input:checked + .switch-bg {
-                background-color: #3b82f6; /* blue-500 */
-            }
-            .switch-dot {
-                transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-            }
-            .switch-input:checked + .switch-bg .switch-dot {
-                transform: translateX(20px);
-            }
-        </style>
         <div class="button-row flex flex-col gap-2">
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleOrbits" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Mostrar Órbitas</span>
+            </label>
             <label class="flex items-center cursor-pointer">
                 <input type="checkbox" id="toggleAxes" class="switch-input sr-only">
                 <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
@@ -62,11 +57,25 @@
                 <span class="ml-3">Vía Láctea</span>
             </label>
             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleSunOrbit" class="switch-input sr-only" checked>
+                <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
+                    <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
+                </div>
+                <span class="ml-3">Órbita del Sol</span>
+            </label>
+            <button id="resetCameraPosition" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                Resetear Cámara
+            </button>
+            <label class="flex items-center cursor-pointer" id="kuiperBeltLabel">
                 <input type="checkbox" id="toggleAsteroidBeltKuiper" class="switch-input sr-only">
                 <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
                     <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
                 </div>
-                    <span class="ml-3">Cinturón de Kuiper</span>
+                <span class="ml-3">Cinturón de Kuiper</span>
+                <div class="warning-tooltip" id="kuiperWarningTooltip">
+                    <p>⚠️</p>
+                    <p>Si se activa, puede experimentar lentitud</p>
+                </div>
             </label>
             <label class="flex items-center cursor-pointer">
                 <input type="checkbox" id="toggleOrbitType" class="switch-input sr-only" checked>
@@ -80,11 +89,11 @@
                 <div class="switch-bg w-11 h-6 bg-gray-300 rounded-full transition-colors duration-300 relative">
                     <div class="switch-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full switch-dot"></div>
                 </div>
-                <span class="ml-3">Inclinación de Órbita</span>
+                <span class="ml-3">Orbitas Inclinadas</span>
             </label>
         </div>
     </div>
-    
+
     <div class="info-panel" id="infoPanel">
         <h2 class="text-xl font-bold mb-2">Sistema Solar</h2>
         <p class="mb-1">• Sol: Con corona solar y efectos de fuego</p>
@@ -109,15 +118,40 @@
             <p>GitHub: <a href="https://github.com/NessGoodess" target="_blank">NessGoodess</a></p>
         </div>
     </div>
-    
+
     <div class="planet-tooltip" id="planetTooltip"></div>
-    
+
     <div class="planet-info" id="planetInfo">
         <span class="close" id="closePlanetInfo">&times;</span>
         <h2 id="planetInfoTitle">Nombre del Planeta</h2>
         <div id="planetInfoContent"></div>
     </div>
-    
+
     <script src="../dist/solarSystem.bundle.js"></script>
+
+    <script>
+        // Control del tooltip de advertencia del Cinturón de Kuiper
+        const kuiperBeltLabel = document.getElementById('kuiperBeltLabel');
+        const kuiperWarningTooltip = document.getElementById('kuiperWarningTooltip');
+
+        let tooltipTimeout;
+
+        if (kuiperBeltLabel && kuiperWarningTooltip) {
+            // Mostrar tooltip al hacer hover
+            kuiperBeltLabel.addEventListener('mouseenter', () => {
+                clearTimeout(tooltipTimeout);
+                tooltipTimeout = setTimeout(() => {
+                    kuiperWarningTooltip.style.display = 'flex';
+                }, 100);
+            });
+
+            // Ocultar tooltip al salir del hover
+            kuiperBeltLabel.addEventListener('mouseleave', () => {
+                clearTimeout(tooltipTimeout);
+                kuiperWarningTooltip.style.display = 'none';
+            });
+        }
+    </script>
 </body>
+
 </html>
