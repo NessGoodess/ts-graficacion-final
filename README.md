@@ -14,7 +14,7 @@ Utilicé Webpack para facilitar el desarrollo, mejorar la organización del cód
 
 ## 🚀 Demo
 
-Puedes ver el proyecto en acción (por ejemplo, en GitHub Pages):
+Puedes ver el proyecto en acción (GitHub Pages):
 
 ```
 https://nessgoodess.github.io/ts-graficacion-final/
@@ -22,10 +22,10 @@ https://nessgoodess.github.io/ts-graficacion-final/
 ## 📸 Capturas de pantalla
 
 ### Menú principal
-![Menú principal](public/assets/captura_menu.png)
+![Menú principal](public/assets/captura_menu_v2.png)
 
 ### Sistema Solar
-![Sistema Solar](public/assets/captura_solarsystem.png)
+![Sistema Solar](public/assets/captura_solarsystem_v2.png)
 
 ### Frans Laboratory
 ![Frans Laboratory](public/assets/captura_franslab.png)
@@ -69,7 +69,10 @@ https://nessgoodess.github.io/ts-graficacion-final/
    npx serve dist
    ```
 4. Luego abre tu navegador y ve a:
-   - Localhost: http://localhost:9000/
+   - Localhost: 
+   ```
+   http://localhost:9000/
+   ```
 
 ## 📝 Créditos
 
